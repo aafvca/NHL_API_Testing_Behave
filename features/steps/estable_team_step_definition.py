@@ -20,30 +20,12 @@ def step_impl(context, api_filter):
     api_teams_roster_id = jmespath.compile(api_filter)
     global_general_variables['api_teams_roster_id'] = api_teams_roster_id
 
-@when(u'Set HEADER param request content type as "{header_content_type}"')
-def step_impl(context, header_content_type):
-    http_request_header['content-type'] = header_content_type
-
-
-@when(u'Set HEADER param response accept type as "{header_accept_type}"')
-def step_impl(context, header_accept_type):
-    http_request_header['Accept'] = header_accept_type
-
 @given(u'Set Montreal Canadiens api endpoint for "{roster_season}" roster')
 def step_impl(context, roster_season):
     if roster_season == '2016-2017':
         global_general_variables['GET_api_endpoint'] = "/8?expand=team.roster&season=20162017"
     elif roster_season == '2017-2018':
         global_general_variables['GET_api_endpoint'] = "/8?expand=team.roster&season=20172018"
-    
-@when(u'Set Query param as "{query_param}"')
-def step_impl(context, query_param):
-    if 'empty' in query_param:
-        http_request_url_query_param.clear()
-    else:
-        http_request_url_query_param.clear()
-        http_request_url_query_param['signout_emailid'] = global_general_variables['email']
-        http_request_url_query_param['session_id'] = global_general_variables['latest_session_key']
         
 @when(u'Raise "{http_request_type}" HTTP request')
 def step_impl(context, http_request_type):
