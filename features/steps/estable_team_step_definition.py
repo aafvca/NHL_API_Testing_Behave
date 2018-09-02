@@ -86,11 +86,38 @@ def step_impl(context):
 def step_impl(context, body_parsing_for):
     current_json = (global_general_variables['response_full'].json())
     if '2016_2017_roster' == body_parsing_for:
-        roster_1617 = (global_general_variables['api_teams_roster_id'].search(current_json))
-        print roster_1617
+        global_general_variables['roster_1617'] = (global_general_variables['api_teams_roster_id'].search(current_json))
     elif '2017_2018_roster' == body_parsing_for:
-        roster_1718 = (global_general_variables['api_teams_roster_id'].search(current_json))
-        print roster_1718
+        global_general_variables['roster_1718'] = (global_general_variables['api_teams_roster_id'].search(current_json))
+		
+@given(u'The first season roster to compare is "{compare_season1}"')
+def step_impl(context, compare_season1):
+	if compare_season1 == '2016-2017':
+		global_general_variables['roster1'] = (global_general_variables['roster_1617'])
+
+@given(u'The second season roster to compare is "{compare_season2}"')
+def step_impl(context, compare_season2):
+	if compare_season2 == '2017-2018':
+		global_general_variables['roster2'] = (global_general_variables['roster_1718'])
+
+@when(u'There are some players in both seasons')
+def step_impl(context):
+	both_seasons = []
+	for player in (global_general_variables['roster1']):
+		if player in (global_general_variables['roster2']):
+			both_seasons.append(player)
+	global_general_variables['both_seasons'] = both_seasons
+		
+@when(u'The minimum number of players in both seasons is "{min_players}"')
+def step_impl(context, min_players):
+    global_general_variables['min_players'] = int(min_players)
+	
+@then(u'We have a stable team')
+def step_impl(context):
+	if len(global_general_variables['both_seasons']) < (global_general_variables['min_players']):
+		assert False, '*** There are less than 10 players in both seasons ***'
+	else:
+		print 'The max number of players is: ' + str(len(global_general_variables['both_seasons']))
 
  
 
