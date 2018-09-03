@@ -1,7 +1,7 @@
 Feature: Estable team feature
 
 Background: 
-	Given Set basic teams url is "https://statsapi.web.nhl.com/api/v1/teams/"
+	Given Set teams url is "https://statsapi.web.nhl.com/api/v1/teams/"
 	   And Set roster json filter as "teams[].roster.roster[].person.id"
 
 Scenario: Request roster 2016-2017
@@ -24,7 +24,7 @@ Scenario: Request roster 2017-2018
 	
 Scenario: Find the number of players in both seasons
   Given The first season roster to compare is "2016-2017" 
-    And The second season roster to compare is "2017-2018"
-	When There are some players in both seasons
+    When The second season roster to compare is "2017-2018"
+	And There are some players in both seasons
 	And The minimum number of players in both seasons is "10"
   Then We have a stable team
