@@ -6,7 +6,7 @@ Background:
 Scenario: Request points information for season 2016-2017
   Given The roster is for both 2016-2017 and 2017-2018 seasons
 	And Set season stats api endpoint for "2016-2017" roster
-	And Set player points json filter as "stats[].splits[].stat.points"
+	And Set json filter as "stats[].splits[].stat.points"
   Then Collect stat "points" for the roster
     And The data collected is cleaned
 	And The stats for season "2016-2017" are collected
@@ -14,7 +14,7 @@ Scenario: Request points information for season 2016-2017
 Scenario: Request points information for season 2017-2018
   Given The roster is for both 2016-2017 and 2017-2018 seasons
 	And Set season stats api endpoint for "2017-2018" roster
-	And Set player points json filter as "stats[].splits[].stat.points"
+	And Set json filter as "stats[].splits[].stat.points"
   Then Collect stat "points" for the roster
     And The data collected is cleaned
 	And The stats for season "2017-2018" are collected	  

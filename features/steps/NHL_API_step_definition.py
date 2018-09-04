@@ -71,6 +71,8 @@ def step_impl(context, body_parsing_for):
         global_general_variables['roster_1617'] = (global_general_variables['api_teams_roster_id'].search(current_json))
     elif '2017_2018_roster' == body_parsing_for:
         global_general_variables['roster_1718'] = (global_general_variables['api_teams_roster_id'].search(current_json))
+    elif 'position' == body_parsing_for:
+	    global_general_variables['teams_position'] = (global_general_variables['api_stats_filter'].search(current_json))
 		
 @given(u'The first season roster to compare is "{compare_season1}"')
 def step_impl(context, compare_season1):
@@ -118,7 +120,7 @@ def step_impl(context, season_stats):
     elif season_stats == '2017-2018':
         global_general_variables['GET_api_endpoint'] = "/stats?stats=statsSingleSeason&season=20172018"	
 		
-@given(u'Set player points json filter as "{stats_filter}"')
+@given(u'Set json filter as "{stats_filter}"')
 def step_impl(context, stats_filter):
 	global_general_variables['stats_filter'] = stats_filter
 	api_stats_filter = jmespath.compile(stats_filter)
@@ -132,15 +134,17 @@ def step_impl(context, stats_parameter):
 	global_general_variables['stats_parameter'] = stats_parameter
 	global_general_variables['stat_values'] = []
 	for player in roster_season:
-		url_temp = people_url + str(player) + global_general_variables['GET_api_endpoint']
+		if ('currentTeam' == stats_parameter or 'position' == stats_parameter):
+			url_temp = people_url + str(player)
+		else:
+			url_temp = people_url + str(player) + global_general_variables['GET_api_endpoint']
 		http_request_body.clear()
 		global_general_variables['response_full'] = requests.get(url_temp,
                                                                              headers=http_request_header,
                                                                              params=http_request_url_query_param,
                                                                              data=http_request_body)
-		if "points" == stats_parameter:
-			current_json = (global_general_variables['response_full'].json())
-			global_general_variables['stat_values'].append((global_general_variables['api_stats_filter'].search(current_json)))
+		current_json = (global_general_variables['response_full'].json())
+		global_general_variables['stat_values'].append((global_general_variables['api_stats_filter'].search(current_json)))
 
 @then(u'The data collected is cleaned')
 def step_impl(context):
@@ -211,3 +215,45 @@ def step_impl(context):
 def step_impl(context):
 	if global_general_variables['team_improvement'] == False:
 		assert False, '*** The team did not improve, more points in season 2016-2017 ***'
+		
+# Test 3
+
+@given(u'The Montreal Canadiens roster for "{season}" season')
+def step_impl(context,season):
+	if '2017-2018' == season:
+		global_general_variables['roster_season'] = (global_general_variables['roster_1718'])
+
+@given(u'The players currentTeam for season "{season}"')
+def step_impl(context,season):
+	if '2017-2018' == season:
+		global_general_variables['currentTeam'] = global_general_variables['stat_1718']
+
+@then(u'All the players currentTeam should be "{team}"')
+def step_impl(context,team):
+	not_canadien = 0
+	for player in global_general_variables['currentTeam']:
+		if team not in player:
+			not_canadien = not_canadien + 1
+	if not_canadien !=0:
+		assert False, '*** Some players have different or no team in people currentTeam ***'
+		
+@given(u'The position information with "{function}" function')
+def step_impl(context, function):
+	if 'people' == function:
+		global_general_variables['people_position'] = global_general_variables['stat_1718']
+	elif 'teams' == function:
+		global_general_variables['teams_position']
+		
+@then(u'Compare both functions')
+def step_impl(context):
+	global_general_variables['not_same_team'] = 0
+	counter = len(global_general_variables['teams_position']) - 1
+	while counter >= 0:
+		if global_general_variables['teams_position'][counter] != global_general_variables['people_position'][counter]:
+			global_general_variables['not_same_team'] += global_general_variables['not_same_team']
+		counter = counter - 1
+
+@then(u'Both should have the same team')
+def step_impl(context):
+	if global_general_variables['not_same_team'] != 0:
+		assert False, '*** There are differences in positions between the two functions ***'
