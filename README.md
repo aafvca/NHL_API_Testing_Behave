@@ -1,4 +1,4 @@
-# NHL_API_testing
+# NHL_API_testing_Behave
 
 # General
 The purpose of this repo is to create a testing framework using Behave framework (BDD) that will help to test the NHL API described in:
@@ -6,7 +6,7 @@ The purpose of this repo is to create a testing framework using Behave framework
 - https://gitlab.com/dword4/nhlapi
 - https://github.com/erunion/sport-api-specifications/tree/master/nhl
 
-This repo include 4 feature  and one step script which will be described further.
+This repo include 4 feature  and one step script.
 
 # Prerequisites
 In order to execute the test scripts you need:
